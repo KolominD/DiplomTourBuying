@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.data.DataHelper;
-import ru.netology.db.dbHelper;
+import ru.netology.dataBase.DataBaseHelper;
 import ru.netology.page.PaymentPage;
 import ru.netology.page.MainPage;
 
@@ -26,7 +26,7 @@ public class UICardNumberTest {
 
     @BeforeEach
     public void setUp() {
-        dbHelper.dbClean();
+        DataBaseHelper.dbClean();
         open("http://localhost:8080/");
     }
     @Test

@@ -4,7 +4,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.data.DataHelper;
-import ru.netology.db.dbHelper;
+import ru.netology.dataBase.DataBaseHelper;
 import ru.netology.page.PaymentPage;
 import ru.netology.page.MainPage;
 
@@ -25,7 +25,7 @@ public class HappyPathAndSadPath {
 
     @BeforeEach
     public void setUp() {
-        dbHelper.dbClean();
+        DataBaseHelper.dbClean();
         open("http://localhost:8080/");
     }
 
@@ -41,10 +41,10 @@ public class HappyPathAndSadPath {
                 DataHelper.fakerCVC());
         PaymentPage.rightCheckField("Успешно", "Операция одобрена Банком.");
 
-        var statusSQL = dbHelper.dbGetStatus();
+        var statusSQL = DataBaseHelper.dbGetStatus();
         assertEquals("APPROVED", statusSQL);
 
-        var countSQL = dbHelper.dbGetOrder_Entity();
+        var countSQL = DataBaseHelper.dbGetOrderEntity();
         assertEquals("1", countSQL);
     }
 
@@ -60,11 +60,9 @@ public class HappyPathAndSadPath {
                 DataHelper.fakerCVC());
         PaymentPage.rightCheckField("Успешно", "Операция одобрена Банком.");
 
-        var statusSQL = dbHelper.dbGetStatus();
+        var statusSQL = DataBaseHelper.dbGetStatusByCreditCard();
         assertEquals("APPROVED", statusSQL);
 
-        var countSQL = dbHelper.dbGetOrder_Entity();
-        assertEquals("1", countSQL);
     }
 
     @Test
@@ -78,7 +76,7 @@ public class HappyPathAndSadPath {
                 DataHelper.fakerCardHolder(),
                 DataHelper.fakerCVC());
         paymentPage.rightCheckField("Успешно", "Операция одобрена Банком.");
-        var amountSQL = dbHelper.dbGetAmount();
+        var amountSQL = DataBaseHelper.dbGetAmount();
         assertEquals("45000", amountSQL);
     }
 
@@ -94,7 +92,7 @@ public class HappyPathAndSadPath {
                 DataHelper.fakerCVC());
         PaymentPage.rightCheckField("Ошибка", "Ошибка! Банк отказал в проведении операции.");
 
-        var statusSQL = dbHelper.dbGetStatus();
+        var statusSQL = DataBaseHelper.dbGetStatusByCreditCard();
         assertEquals("DECLINED", statusSQL);
     }
 }

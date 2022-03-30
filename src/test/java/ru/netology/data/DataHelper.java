@@ -27,10 +27,10 @@ public class DataHelper {
 
     public static String getCardNumber(String status) {
         String cardNumber = "";
-        if (status == "APPROVED") {
+        if (status.equals("APPROVED")) {
             cardNumber = "4444 4444 4444 4441";
         }
-        if (status == "DECLINED") {
+        if (status.equals("DECLINED")) {
             cardNumber = "4444 4444 4444 4442";
         }
         return cardNumber;
