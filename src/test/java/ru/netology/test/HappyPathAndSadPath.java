@@ -2,13 +2,16 @@ package ru.netology.test;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.netology.data.DataHelper;
 import ru.netology.dataBase.DataBaseHelper;
-import ru.netology.page.PaymentPage;
 import ru.netology.page.MainPage;
+import ru.netology.page.PaymentPage;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HappyPathAndSadPath {
@@ -76,7 +79,7 @@ public class HappyPathAndSadPath {
                 DataHelper.fakerCardHolder(),
                 DataHelper.fakerCVC());
         paymentPage.rightCheckField("Успешно", "Операция одобрена Банком.");
-        var amountSQL = DataBaseHelper.dbGetAmount();
+        var amountSQL = DataBaseHelper.dbGetAmountByDebitCard();
         assertEquals("45000", amountSQL);
     }
 

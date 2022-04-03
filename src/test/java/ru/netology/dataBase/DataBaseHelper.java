@@ -1,6 +1,7 @@
 package ru.netology.dataBase;
 
 import lombok.SneakyThrows;
+import lombok.val;
 
 import java.sql.*;
 
@@ -10,34 +11,48 @@ public class DataBaseHelper {
     }
 
     @SneakyThrows
+    public static ResultSet getConnectionMySQL(String selectSQL) {
+        var dbUrl = System.getProperty("db.url");
+        var login = System.getProperty("login");
+        var password = System.getProperty("password");
+        Connection connection = DriverManager.getConnection(dbUrl, login, password);
+        PreparedStatement StatusStmt = connection.prepareStatement(selectSQL);
+        return StatusStmt.executeQuery();
+
+    }
+
+    @SneakyThrows
+    public static int getConnectionMySQLWithUpdate(String selectSQL) {
+        var dbUrl = System.getProperty("db.url");
+        var login = System.getProperty("login");
+        var password = System.getProperty("password");
+        Connection connection = DriverManager.getConnection(dbUrl, login, password);
+        PreparedStatement StatusStmt = connection.prepareStatement(selectSQL);
+        return StatusStmt.executeUpdate();
+
+    }
+
+
+    @SneakyThrows
     public static String dbGetStatus() {
-        String dbSQLStatus = "SELECT status FROM payment_entity ;";
+        String statusSQL = "SELECT status FROM payment_entity; ";
         String status = null;
-        try (
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-                PreparedStatement statusStatement = connection.prepareStatement(dbSQLStatus);
-        ) {
-            try (ResultSet rs = statusStatement.executeQuery()) {
-                if (rs.next()) {
-                    status = rs.getString("status");
-                }
+        try (val rs = getConnectionMySQL(statusSQL)) {
+            if (rs.next()) {
+                status = rs.getString("status");
             }
         }
+
         return status;
     }
 
     @SneakyThrows
-    public static String dbGetAmount() {
+    public static String dbGetAmountByDebitCard() {
         String dbSQLAmount = "SELECT amount FROM payment_entity;";
         String amount = null;
-        try (
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-                PreparedStatement amountStatement = connection.prepareStatement(dbSQLAmount);
-        ) {
-            try (ResultSet rs = amountStatement.executeQuery()) {
-                if (rs.next()) {
-                    amount = rs.getString("amount");
-                }
+        try (val rs = getConnectionMySQL(dbSQLAmount)) {
+            if (rs.next()) {
+                amount = rs.getString("amount");
             }
         }
         return amount;
@@ -45,18 +60,15 @@ public class DataBaseHelper {
 
     @SneakyThrows
     public static String dbGetOrderEntity() {
-        String dataSQLCount = "SELECT count(oe.id) as count FROM order_entity oe, payment_entity pe WHERE oe.payment_id = pe.transaction_id;";
+        String dbSQLEntity = "SELECT count(oe.id) as count FROM order_entity oe, payment_entity pe WHERE oe.payment_id = pe.transaction_id;";
         String orderEntity = null;
-        try (
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-                PreparedStatement countStatement = connection.prepareStatement(dataSQLCount);
-        ) {
-            try (ResultSet rs = countStatement.executeQuery()) {
-                if (rs.next()) {
-                    orderEntity = rs.getString("count");
-                }
+
+        try (val rs = getConnectionMySQL(dbSQLEntity)) {
+            if (rs.next()) {
+                orderEntity = rs.getString("count");
             }
         }
+
         return orderEntity;
     }
 
@@ -67,30 +79,27 @@ public class DataBaseHelper {
         String deletePaymentEntity = "DELETE FROM payment_entity;";
         String deleteOrderEntity = "DELETE FROM order_entity;";
 
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-             Statement deleteCreditRequestEntityStatement = connection.createStatement();
-             Statement deletePaymentEntityStatement = connection.createStatement();
-             Statement deleteOrderEntityStatement = connection.createStatement();
-        ) {
-            deleteCreditRequestEntityStatement.executeUpdate(deleteCreditRequestEntity);
-            deletePaymentEntityStatement.executeUpdate(deletePaymentEntity);
-            deleteOrderEntityStatement.executeUpdate(deleteOrderEntity);
+        try {
+            getConnectionMySQLWithUpdate(deletePaymentEntity);
+            getConnectionMySQLWithUpdate(deleteOrderEntity);
+            getConnectionMySQLWithUpdate(deleteCreditRequestEntity);
+        } catch (Exception e) {
+
         }
+
     }
+
     @SneakyThrows
     public static String dbGetStatusByCreditCard() {
-        String dbSQLStatus = "SELECT status FROM credit_request_entity ;";
+        String dbStatus = "SELECT status FROM credit_request_entity ;";
         String status = null;
-        try (
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-                PreparedStatement statusStatement = connection.prepareStatement(dbSQLStatus);
-        ) {
-            try (ResultSet rs = statusStatement.executeQuery()) {
-                if (rs.next()) {
-                    status = rs.getString("status");
-                }
+
+        try (val rs = getConnectionMySQL(dbStatus)) {
+            if (rs.next()) {
+                status = rs.getString("status");
             }
         }
+
         return status;
     }
 }

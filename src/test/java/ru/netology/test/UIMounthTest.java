@@ -26,7 +26,6 @@ public class UIMounthTest {
 
     @BeforeEach
     public void setUp() {
-        DataBaseHelper.dbClean();
         open("http://localhost:8080/");
     }
 

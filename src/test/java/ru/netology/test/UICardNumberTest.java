@@ -26,7 +26,6 @@ public class UICardNumberTest {
 
     @BeforeEach
     public void setUp() {
-        DataBaseHelper.dbClean();
         open("http://localhost:8080/");
     }
     @Test
